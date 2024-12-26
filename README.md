@@ -41,7 +41,7 @@ CHECK_INTERVAL_MINUTES=5
 
 Start the monitoring system:
 ```bash
-npm start
+npx ts-node src/index.ts
 ```
 
 The system will:
