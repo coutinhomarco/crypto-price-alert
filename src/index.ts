@@ -45,22 +45,50 @@ const sendTelegramAlert = async (message: string) => {
   }
 };
 
+const sendWalletValueUpdate = async (tokenPrice: number) => {
+  const walletSize = parseFloat(process.env.WALLET_SIZE || '0');
+  
+  if (walletSize <= 0) {
+    console.log('Wallet size not configured or invalid');
+    return;
+  }
+
+  const totalValue = walletSize * tokenPrice;
+  const tokenName = process.env.TOKEN_NAME || 'Token';
+  
+  const message = `💰 *${tokenName} Wallet Update* 💰\n\nWallet size: ${walletSize} ${tokenName}\nCurrent value: $${totalValue.toFixed(2)}`;
+  
+  try {
+    await sendTelegramAlert(message);
+    console.log(`Sent wallet value update: $${totalValue.toFixed(2)}`);
+  } catch (error) {
+    console.error('Error sending wallet value update:', error);
+  }
+};
+
 const checkPriceThresholds = async (tokenData: number) => {
   const upperThreshold = parseFloat(process.env.UPPER_THRESHOLD || '1000');
   const lowerThreshold = parseFloat(process.env.LOWER_THRESHOLD || '900');
   const tokenName = process.env.TOKEN_NAME || 'Token';
 
   if (tokenData > upperThreshold) {
+      
+    // Send wallet value update
+    await sendWalletValueUpdate(tokenData);
     const message = `🚨 *${tokenName} Price Alert* 🚨\n\nPrice is *above* $${upperThreshold}!\nCurrent price: $${tokenData}`;
     console.log(message);
     await sendTelegramAlert(message);
   } else if (tokenData < lowerThreshold) {
+      
+    // Send wallet value update
+    await sendWalletValueUpdate(tokenData);
     const message = `🚨 *${tokenName} Price Alert* 🚨\n\nPrice is *below* $${lowerThreshold}!\nCurrent price: $${tokenData}`;
     console.log(message);
     await sendTelegramAlert(message);
   } else {
     console.log(`${tokenName} (${tokenData}) price: $${tokenData}`);
   }
+
 };
 
 async function monitorPrice() {
