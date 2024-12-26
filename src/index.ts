@@ -25,21 +25,43 @@ const fetchTokenPrice = async (tokenAddress: string) => {
   }
 };
 
-function checkPriceThresholds(tokenData: number) {
+const sendTelegramAlert = async (message: string) => {
+  const botToken = process.env.TELEGRAM_BOT_TOKEN;
+  const chatId = process.env.TELEGRAM_CHAT_ID;
+
+  if (!botToken || !chatId) {
+    console.error('Telegram credentials not configured');
+    return;
+  }
+
+  try {
+    await axios.post(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+      chat_id: chatId,
+      text: message,
+      parse_mode: 'Markdown'
+    });
+  } catch (error) {
+    console.error('Error sending Telegram alert:', error);
+  }
+};
+
+const checkPriceThresholds = async (tokenData: number) => {
   const upperThreshold = parseFloat(process.env.UPPER_THRESHOLD || '1000');
   const lowerThreshold = parseFloat(process.env.LOWER_THRESHOLD || '900');
   const tokenName = process.env.TOKEN_NAME || 'Token';
 
   if (tokenData > upperThreshold) {
-    console.log(`ALERT: ${tokenName} (${tokenData}) price is above $${upperThreshold}!`);
-    console.log(`Current price: $${tokenData}`);
+    const message = `🚨 *${tokenName} Price Alert* 🚨\n\nPrice is *above* $${upperThreshold}!\nCurrent price: $${tokenData}`;
+    console.log(message);
+    await sendTelegramAlert(message);
   } else if (tokenData < lowerThreshold) {
-    console.log(`ALERT: ${tokenName} (${tokenData}) price is below $${lowerThreshold}!`);
-    console.log(`Current price: $${tokenData}`);
+    const message = `🚨 *${tokenName} Price Alert* 🚨\n\nPrice is *below* $${lowerThreshold}!\nCurrent price: $${tokenData}`;
+    console.log(message);
+    await sendTelegramAlert(message);
   } else {
     console.log(`${tokenName} (${tokenData}) price: $${tokenData}`);
   }
-}
+};
 
 async function monitorPrice() {
   const tokenId = process.env.CRYPTO_ID;
@@ -51,7 +73,7 @@ async function monitorPrice() {
 
   try {
     const tokenData = await fetchTokenPrice(tokenId);
-    checkPriceThresholds(tokenData);
+    await checkPriceThresholds(tokenData);
   } catch (error) {
     console.error('Failed to monitor price:', error);
   }
