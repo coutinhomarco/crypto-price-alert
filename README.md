@@ -1,15 +1,15 @@
-
 # Crypto Price Alert System
 
-A Node.js application that monitors cryptocurrency prices and sends alerts when they cross specified thresholds.
+A Node.js application that monitors cryptocurrency prices and sends alerts via Telegram when they cross specified thresholds.
 
 ## Features
 
 - Real-time price monitoring using GeckoTerminal API
 - Configurable price thresholds
 - Customizable check intervals
-- Immediate alerts when prices cross thresholds
+- Immediate Telegram alerts when prices cross thresholds
 - Support for any Solana-based token
+- Markdown-formatted Telegram messages with emojis
 
 ## Installation
 
@@ -35,7 +35,15 @@ TOKEN_NAME=Your_Token_Name
 UPPER_THRESHOLD=1000
 LOWER_THRESHOLD=900
 CHECK_INTERVAL_MINUTES=5
+TELEGRAM_BOT_TOKEN=your_bot_token
+TELEGRAM_CHAT_ID=your_chat_id
 ```
+
+## Telegram Setup
+
+1. Create a Telegram bot using [BotFather](https://core.telegram.org/bots#botfather)
+2. Get your chat ID (you can use @userinfobot to get it)
+3. Add the bot token and chat ID to your `.env` file
 
 ## Usage
 
@@ -47,7 +55,7 @@ npx ts-node src/index.ts
 The system will:
 1. Check the token price immediately on startup
 2. Continue checking at the specified interval
-3. Log alerts when prices cross the thresholds
+3. Send Telegram alerts when prices cross the thresholds
 
 ## Configuration
 
@@ -60,14 +68,15 @@ The system will:
 | `UPPER_THRESHOLD`      | Price threshold for upper alert      | 1000          |
 | `LOWER_THRESHOLD`      | Price threshold for lower alert      | 900           |
 | `CHECK_INTERVAL_MINUTES`| Interval between price checks (minutes)| 5            |
+| `TELEGRAM_BOT_TOKEN`   | Your Telegram bot token              | Required      |
+| `TELEGRAM_CHAT_ID`     | Your Telegram chat ID                | Required      |
 
-## Example Output
+## Example Telegram Alert
 
 ```
-Price monitoring started. Checking every 5 minutes.
-Running price check...
-MIRA (1001) price: $1001
-ALERT: MIRA (1001) price is above $1000!
+🚨 MIRA Price Alert 🚨
+
+Price is above $1000!
 Current price: $1001
 ```
 
