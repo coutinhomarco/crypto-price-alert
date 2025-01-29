@@ -97,15 +97,3 @@ Contributions are welcome! Please open an issue or submit a pull request.
 ## Support
 
 For support, please open an issue in the GitHub repository.
-```
-
-This README includes:
-1. Clear project description
-2. Installation instructions
-3. Usage guide
-4. Configuration details
-5. Example output
-6. Dependency information
-7. License and contribution guidelines
-
-It's comprehensive yet concise, making it easy for users to understand and use your project.
